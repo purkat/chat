@@ -1,3 +1,35 @@
 {% extends "base.html" %}
 
 {% block title %}Prva stran{% endblock title %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-4">
+            {% if logiran %}
+                <form method="post" action="/">
+                    Vnosno polje
+                        {% if napaka == False %}
+                            <div class="alert-success">Sporocilo sprejeto.</div>
+                        {% endif %}
+                    <textarea name="tekst" class="form-control"></textarea>
+                    <button class="btn btn-info btn-lg" type="submit">Pošlji</button>
+                </form>
+            {% else %}
+                {% if napaka %}
+                    <div class="alert-danger">{{napaka}}</div>
+                {% endif %}
+                <p>Za pisanje je potrebna <a href="{{ url }}">prijava</a>.</p>
+            {% endif %}
+        </div>
+        <div class="col-sm-4">
+            Prejsnja sporocila
+            {% for sporocilo in sporocila %}
+
+            <section class="alert alert-warning">
+                <p>{{ sporocilo.uporabnik }} ({{ sporocilo.cas }})</p>
+                <p>{{ sporocilo.tekst }}</p>
+            </section>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

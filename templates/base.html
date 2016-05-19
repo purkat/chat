@@ -10,53 +10,30 @@
 </head>
 <body>
     <div class="container">
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">Home</a>
-        </div>
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <a class="navbar-brand" href="/">Home</a>
+            </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav navbar-right">
-            <li data-toggle="modal" data-target="#onasModal">
-                {% if uporabnik %}
-                    {{ uporabnik }} <a href="/logout">Logout</a>
-                {% else %}
-                    <a href="/login">Login</a>
-                {% endif %}
-            </li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
-
-    <div class="row">
-        <div class="col-sm-4">
-            <form method="post" action="/">
-                Vnosno polje
-                {% if napaka %}
-                 <div class="alert-danger">{{napaka}}</div>
-                {% else %}
-                <div class="alert-success">Sporocilo sprejeto.</div>
-                {% endif %}
-                <textarea name="tekst" class="form-control"></textarea>
-                <input type="hidden" name="uporabnik" value="{{ uporabnik }}">
-                <button class="btn btn-info btn-lg" type="submit">Pošlji</button>
-            </form>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav navbar-right">
+                <li data-toggle="modal" data-target="#onasModal">
+                    {% if logiran %}
+                        {{ user.nickname() }} <a href="{{ url }}">Logout</a>
+                    {% else %}
+                        <a href="{{ url }}">Login</a>
+                    {% endif %}
+                </li>
+              </ul>
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav>
+        <div>
+            {% block content %}{% endblock content %}
         </div>
-        <div class="col-sm-4">
-            Prejsnja sporocila
-            {% for sporocilo in sporocila %}
-
-            <section class="alert alert-warning">
-                <p>{{ sporocilo.uporabnik }} ({{ sporocilo.cas }})</p>
-                <p>{{ sporocilo.tekst }}</p>
-            </section>
-            {% endfor %}
-        </div>
-    </div>
     </div>
 </body>
 </html>

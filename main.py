@@ -7,6 +7,8 @@ import webapp2
 import time
 from model import Sporocilo
 
+from google.appengine.api import users
+
 template_dir = os.path.join(os.path.dirname(__file__), "templates")
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir), autoescape=False)
 
@@ -32,27 +34,46 @@ class BaseHandler(webapp2.RequestHandler):
 
 class MainHandler(BaseHandler):
     def get(self):
-        sporocila = Sporocilo.query().order(Sporocilo.cas).fetch()
+        user = users.get_current_user()
+        if user:
+            logiran = True
+            url = users.create_logout_url('/')
+        else:
+            logiran = False
+            url = users.create_login_url('/')
+
         parametri = {
-            "sporocila": sporocila
-        }
+            "logiran": logiran,
+            "url": url,
+            "user": user}
+
+        sporocila = Sporocilo.query().order(Sporocilo.cas).fetch()
+        parametri["sporocila"] = sporocila
         return self.render_template("start.html", parametri)
 
     def post(self):
-        tekst = self.request.get("tekst")
-        uporabnik = self.request.get("uporabnik")
-        napaka = False
-        if uporabnik:
-            sporocilo = Sporocilo(tekst=tekst, uporabnik=uporabnik)
+        user = users.get_current_user()
+        if user:
+            logiran = True
+            url = users.create_logout_url('/')
+
+            tekst = self.request.get("tekst")
+            sporocilo = Sporocilo(tekst=tekst, uporabnik=user.nickname())
             sporocilo.put()
             time.sleep(1)
+            napaka = False
         else:
-            napaka = "Uporabnik ni logiran. Logiraj se :)"
-        sporocila = Sporocilo.query().fetch()
+            logiran = False
+            url = users.create_login_url('/')
+            napaka = "Seja je potekla. Logiraj se ponovno :)"
+
+        sporocila = Sporocilo.query().order(Sporocilo.cas).fetch()
         parametri = {
-            "uporabnik": uporabnik,
+            "logiran": logiran,
             "sporocila": sporocila,
-            "napaka" : napaka
+            "user": user,
+            "napaka": napaka,
+            "url" : url
         }
         return self.render_template("start.html", parametri)
 
