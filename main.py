@@ -67,7 +67,7 @@ class MainHandler(BaseHandler):
             url = users.create_login_url('/')
             napaka = "Seja je potekla. Logiraj se ponovno :)"
 
-        sporocila = Sporocilo.query().order(-Sporocilo.cas).fetch()
+        sporocila = Sporocilo.query(Sporocilo.uporabnik==user.nickname()).order(-Sporocilo.cas).fetch()
         parametri = {
             "logiran": logiran,
             "sporocila": sporocila,
