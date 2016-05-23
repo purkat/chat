@@ -47,7 +47,7 @@ class MainHandler(BaseHandler):
             "url": url,
             "user": user}
 
-        sporocila = Sporocilo.query().order(Sporocilo.cas).fetch()
+        sporocila = Sporocilo.query().order(-Sporocilo.cas).fetch()
         parametri["sporocila"] = sporocila
         return self.render_template("start.html", parametri)
 
@@ -67,7 +67,7 @@ class MainHandler(BaseHandler):
             url = users.create_login_url('/')
             napaka = "Seja je potekla. Logiraj se ponovno :)"
 
-        sporocila = Sporocilo.query().order(Sporocilo.cas).fetch()
+        sporocila = Sporocilo.query().order(-Sporocilo.cas).fetch()
         parametri = {
             "logiran": logiran,
             "sporocila": sporocila,
