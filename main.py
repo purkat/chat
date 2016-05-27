@@ -31,9 +31,7 @@ class BaseHandler(webapp2.RequestHandler):
         template = jinja_env.get_template(view_filename)
         return self.response.out.write(template.render(params))
 
-
-class MainHandler(BaseHandler):
-    def get(self):
+    def preveriUporabnika(self):
         user = users.get_current_user()
         if user:
             logiran = True
@@ -41,7 +39,20 @@ class MainHandler(BaseHandler):
         else:
             logiran = False
             url = users.create_login_url('/')
+        return logiran, url, user
 
+class MainHandler(BaseHandler):
+    def get(self):
+        logiran, url, user = self.preveriUporabnika()
+        '''
+        user = users.get_current_user()
+        if user:
+            logiran = True
+            url = users.create_logout_url('/')
+        else:
+            logiran = False
+            url = users.create_login_url('/')
+        '''
         parametri = {
             "logiran": logiran,
             "url": url,
@@ -52,10 +63,11 @@ class MainHandler(BaseHandler):
         return self.render_template("start.html", parametri)
 
     def post(self):
-        user = users.get_current_user()
-        if user:
-            logiran = True
-            url = users.create_logout_url('/')
+        logiran, url, user = self.preveriUporabnika()
+        #user = users.get_current_user()
+        if logiran:
+            #logiran = True
+            #url = users.create_logout_url('/')
 
             tekst = self.request.get("tekst")
             sporocilo = Sporocilo(tekst=tekst, uporabnik=user.nickname())
@@ -63,8 +75,8 @@ class MainHandler(BaseHandler):
             time.sleep(1)
             napaka = False
         else:
-            logiran = False
-            url = users.create_login_url('/')
+            #logiran = False
+            #url = users.create_login_url('/')
             napaka = "Seja je potekla. Logiraj se ponovno :)"
 
         sporocila = Sporocilo.query(Sporocilo.uporabnik==user.nickname()).order(-Sporocilo.cas).fetch()
